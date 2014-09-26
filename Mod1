@@ -1,0 +1,190 @@
+Sub Backups()
+
+Sheets("Origen").Select
+Cells(1, 1).Select
+ruta = Cells(1, 1).Value
+Selection.End(xlDown).Select
+fila_cliente_final = ActiveCell.Row
+
+For i = 2 To fila_cliente_final
+    cliente = Cells(i, 1)
+    directorio = ruta & cliente & "\"
+    
+    'listamos los archivos
+    ListarFicherosCarpeta (directorio)
+
+    'buscamos el último archivo y lo seleccionamos
+    Cells(1, 1).Select
+    UltimaFila 'sub macro
+    archivo = ActiveCell.Value
+    htm = directorio & archivo
+
+    'abrimos el htm y lo procesamos
+    Call ExtraerDatos(directorio, htm)
+    
+    'volvemos a la lista de archivos
+    Workbooks("backups.xlsm").Activate
+    Sheets("Origen").Select
+Next
+End Sub
+
+
+Sub ListarFicherosCarpeta(directorio)
+
+Set fso = CreateObject("Scripting.FileSystemObject")
+
+Set Carpeta = fso.GetFolder(directorio)
+Set ficheros = Carpeta.Files
+Sheets("Archivos").Select
+Cells.Select
+    Selection.ClearContents
+With Range("A1")
+    .Value = "Ficheros de la carpeta " & directorio
+    .Font.Bold = True
+End With
+Range("A2").Select
+For Each archivo In ficheros
+    ActiveCell = archivo.Name
+    ActiveCell.Offset(1, 0).Select
+Next archivo
+ActiveCell.EntireColumn.AutoFit
+
+Set fso = Nothing
+Set Carpeta = Nothing
+Set ficheros = Nothing
+
+
+End Sub
+
+Sub ExtraerDatos(directorio, htm)
+
+'abrimos el htm
+Workbooks.Open Filename:=htm
+Cells(1, 1).Select
+UltimaFila
+fila_final = ActiveCell.Row
+Reemplazar (fila_final)
+palabra = "TimeCreated"
+Buscar (palabra)
+fila_inicial = ActiveCell.Row + 1
+UltimaFila
+fila_final = ActiveCell.Row
+Worksheets.Add(After:=Worksheets(Worksheets.Count)).Name = "resultados"
+Sheets("resultados").Select
+Cells(1, 1).Value = "Celda de Control"
+Cells(2, 1).Value = "Hora de inicio"
+Cells(2, 2).Value = "Hora de fin"
+Cells(2, 3).Value = "Tiempo usado"
+Cells(2, 4).Value = "Estado"
+Cells(2, 5).Value = "Día"
+Cells(2, 6).Value = "Puntos"
+Cells(2, 7).Value = "Good"
+Cells(2, 8).Value = "Warning"
+Cells(2, 9).Value = "Error"
+
+Call ProcesarDatos(fila_inicial, fila_final)
+Sheets("resultados").Select
+Cells(1, 1).Select
+UltimaFila
+ultima = ActiveCell.Row
+
+Confiabilidad (ultima)
+Colores (ultima)
+Tiempo (ultima)
+
+'MsgBox ActiveCell.Row & " " & ActiveCell.Column
+GuardarySalir (directorio)
+'MsgBox "Proceso Terminado"
+
+
+End Sub
+
+Sub ProcesarDatos(fila_inicial, fila_final)
+Sheets(1).Select
+
+For j = fila_inicial To fila_final
+
+        If Cells(j, 3).Value <> 51 Then
+            
+            If Cells(j, 3).Value <> 1 Then
+            
+                hora_fin = Cells(j, 1).Value
+                evento = Cells(j, 3).Value
+                
+                If evento = 4 Then
+                    puntos = 2
+                Else
+                    If evento = 23 Then
+                    puntos = 1
+                    Else
+                    puntos = 0
+                    End If
+                End If
+                
+                                
+                If Cells(j + 1, 3).Value <> 51 Then
+                
+                hora_inicio = Cells(j + 1, 1).Value
+                Else
+                hora_inicio = Cells(j + 2, 1).Value
+                End If
+                
+                Sheets("resultados").Select
+        
+                Range("A1").Select
+                Selection.End(xlDown).Select
+                fila = ActiveCell.Offset(1, 0).Row
+            
+                Cells(fila, 1) = hora_inicio
+                Cells(fila, 2) = hora_fin
+                Cells(fila, 3) = Format(hora_fin - hora_inicio, "hh:mm")
+                Cells(fila, 4) = evento
+                Cells(fila, 5) = Format(hora_inicio, "DD")
+                Cells(fila, 6) = puntos
+                
+                If puntos = 2 Then
+                Cells(fila, 7) = 1
+                Cells(fila, 8) = 0
+                Cells(fila, 9) = 0
+                Else
+                    If puntos = 1 Then
+                        Cells(fila, 7) = 0
+                        Cells(fila, 8) = 1
+                        Cells(fila, 9) = 0
+                    Else
+                        Cells(fila, 7) = 0
+                        Cells(fila, 8) = 0
+                        Cells(fila, 9) = 1
+                    End If
+            
+                End If
+                
+            End If
+            
+        End If
+    
+        Sheets(1).Select
+    
+    Next
+    Sheets("resultados").Select
+    Ordenar 'sub Macro auxiliar
+    Cells(3, 1).Select
+    ActiveCell.EntireColumn.AutoFit
+    Cells(3, 2).Select
+    ActiveCell.EntireColumn.AutoFit
+    Sheets(1).Select
+    
+    
+End Sub
+
+Sub Pruebas()
+
+htm = "D:\Reports\data\estrada\estdc0914.htm"
+ruta = "D:\Reports\data\estrada\"
+Call ExtraerDatos(ruta, htm)
+'ultima = 32
+'Confiabilidad (ultima)
+'Colores (ultima)
+'Tiempo (ultima)
+
+End Sub
