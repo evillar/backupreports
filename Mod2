@@ -1,0 +1,47 @@
+Sub Reemplazar(fila_final)
+Application.ScreenUpdating = False
+'buscamos las celdas con valor "System.String[]" y las limpiamos
+For x = 1 To fila_final
+    If Cells(x, 1).Value = "System.String[]" Then
+        Cells(x, 1).Value = ""
+    End If
+Next
+'volver a la celda inicial
+Cells(1, 1).Select
+End Sub
+
+
+Sub Buscar(palabra)
+Cells.Find(What:=palabra, After:=ActiveCell, LookIn:=xlFormulas, LookAt _
+        :=xlPart, SearchOrder:=xlByRows, SearchDirection:=xlNext, MatchCase:= _
+        False, SearchFormat:=False).Activate
+End Sub
+
+Sub UltimaFila()
+Selection.End(xlDown).Select
+End Sub
+
+Sub Ordenar()
+    Cells(3, 1).Select
+    Selection.End(xlDown).Select
+    ultima_fila = ActiveCell.Row
+    Range(Cells(3, 1), Cells(ultima_fila, 9)).Select
+    
+    ActiveWorkbook.Worksheets("resultados").Sort.SortFields.Clear
+    ActiveWorkbook.Worksheets("resultados").Sort.SortFields.Add Key:=Range("A3") _
+        , SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortNormal
+    With ActiveWorkbook.Worksheets("resultados").Sort
+        .SetRange Range(Cells(3, 1), Cells(ultima_fila, 9))
+        .Header = xlNo
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+End Sub
+
+Sub GuardarySalir(directorio)
+nombre = Sheets(1).Name
+ActiveWorkbook.SaveAs Filename:=directorio & "graficos\grafi" & nombre
+ActiveWorkbook.Close
+End Sub
