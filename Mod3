@@ -1,0 +1,109 @@
+Sub Confiabilidad(ultima)
+
+Worksheets.Add(After:=Worksheets(Worksheets.Count)).Name = "Confiabilidad"
+
+ActiveSheet.Shapes.AddChart.Select
+
+ActiveChart.SetSourceData Source:=Sheets("resultados").Range(Sheets("resultados").Cells(3, 6), Sheets("resultados").Cells(ultima, 6))
+ActiveChart.ChartType = xlLine
+'ActiveChart.SeriesCollection.XValues Source:=Sheets("resultados").Range(Sheets("resultados").Cells(3, 5), Sheets("resultados").Cells(ultima, 5))
+    ActiveChart.Axes(xlValue).Select
+    ActiveChart.Axes(xlValue).MinorUnit = 1
+    ActiveChart.Axes(xlValue).MaximumScale = 2.5
+    ActiveChart.Axes(xlValue).MinimumScale = 0
+    'ActiveSheet.ChartObjects("1 Gráfico").Activate
+   ' ActiveSheet.ChartObjects("1 Gráfico").Activate
+   nombre = ActiveChart.Parent.Name
+   ActiveSheet.Shapes(nombre).ScaleWidth 1.8354166667, msoFalse, _
+        msoScaleFromBottomRight
+    
+        
+End Sub
+
+Sub Colores(ultima)
+
+Worksheets.Add(After:=Worksheets(Worksheets.Count)).Name = "Colores"
+
+ActiveSheet.Shapes.AddChart.Select
+
+'ActiveChart.SetSourceData Source:=Sheets("resultados").Range(Sheets("resultados").Cells(3, 7), Sheets("resultados").Cells(ultima, 9))
+ActiveChart.ChartType = xlColumnStacked100
+'ActiveChart.SeriesCollection.XValues Source:=Sheets("resultados").Range(Sheets("resultados").Cells(3, 5), Sheets("resultados").Cells(ultima, 5))
+    ActiveChart.Axes(xlValue).MinimumScale = 0
+    ActiveChart.Axes(xlValue).MaximumScale = 1
+    ActiveChart.Axes(xlValue).MajorUnit = 0.1
+    ActiveChart.Axes(xlValue).MajorUnit = 1
+    ActiveChart.Axes(xlValue).MinorUnit = 0.02
+    ActiveChart.SeriesCollection.NewSeries
+    ActiveChart.SeriesCollection(1).Name = "Good"
+    ActiveChart.SeriesCollection(1).Values = Sheets("resultados").Range(Sheets("resultados").Cells(3, 7), Sheets("resultados").Cells(ultima, 7))
+    ActiveChart.SeriesCollection(1).Select
+    With Selection.Format.Fill
+        .Visible = msoTrue
+        .ForeColor.RGB = RGB(255, 255, 0)
+        .Solid
+    End With
+    With Selection.Format.Fill
+        .Visible = msoTrue
+        .ForeColor.RGB = RGB(0, 176, 80)
+        .Transparency = 0
+        .Solid
+    End With
+    ActiveChart.SeriesCollection.NewSeries
+    ActiveChart.SeriesCollection(2).Name = "Warning"
+    ActiveChart.SeriesCollection(2).Values = Sheets("resultados").Range(Sheets("resultados").Cells(3, 8), Sheets("resultados").Cells(ultima, 8))
+    ActiveChart.SeriesCollection(2).Select
+    With Selection.Format.Fill
+        .Visible = msoTrue
+        .ForeColor.RGB = RGB(0, 176, 80)
+        .Transparency = 0
+        .Solid
+    End With
+    With Selection.Format.Fill
+        .Visible = msoTrue
+        .ForeColor.RGB = RGB(255, 255, 0)
+        .Transparency = 0
+        .Solid
+    End With
+    ActiveChart.SeriesCollection.NewSeries
+    ActiveChart.SeriesCollection(3).Name = "Error"
+    ActiveChart.SeriesCollection(3).Values = Sheets("resultados").Range(Sheets("resultados").Cells(3, 9), Sheets("resultados").Cells(ultima, 9))
+    ActiveChart.SeriesCollection(3).Select
+    With Selection.Format.Fill
+        .Visible = msoTrue
+        .ForeColor.RGB = RGB(0, 176, 80)
+        .Solid
+    End With
+    With Selection.Format.Fill
+        .Visible = msoTrue
+        .ForeColor.RGB = RGB(255, 0, 0)
+        .Transparency = 0
+        .Solid
+    End With
+  nombre = ActiveChart.Parent.Name
+   ActiveSheet.Shapes(nombre).ScaleWidth 1.8354166667, msoFalse, _
+        msoScaleFromBottomRight
+   
+        
+End Sub
+
+Sub Tiempo(ultima)
+Worksheets.Add(After:=Worksheets(Worksheets.Count)).Name = "Tiempo"
+
+ActiveSheet.Shapes.AddChart.Select
+
+ActiveChart.SetSourceData Source:=Sheets("resultados").Range(Sheets("resultados").Cells(3, 3), Sheets("resultados").Cells(ultima, 3))
+ActiveChart.ChartType = xlLine
+'ActiveChart.SeriesCollection.XValues Source:=Sheets("resultados").Range(Sheets("resultados").Cells(3, 5), Sheets("resultados").Cells(ultima, 5))
+    ActiveChart.Axes(xlValue).Select
+    ActiveChart.Axes(xlValue).MinimumScale = 0
+    ActiveChart.Axes(xlValue).MaximumScale = 0.4
+    ActiveChart.Axes(xlValue).MajorUnit = 0.05
+    ActiveChart.Axes(xlValue).MinorUnit = 0.01
+    'ActiveSheet.ChartObjects("1 Gráfico").Activate
+   ' ActiveSheet.ChartObjects("1 Gráfico").Activate
+   nombre = ActiveChart.Parent.Name
+   ActiveSheet.Shapes(nombre).ScaleWidth 1.8354166667, msoFalse, _
+        msoScaleFromBottomRight
+
+End Sub
